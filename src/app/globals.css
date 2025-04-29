@@ -1,4 +1,3 @@
-/* src/app/globals.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @tailwind base;
@@ -104,12 +103,11 @@ body {
 }
 
 .time-slots {
-  @apply grid grid-cols-3 gap-2; /* Adjust columns as needed */
+    display: grid;
+    grid-template-columns: 2.5rem 1fr 1fr; /* Adjust first column width as needed */
+    gap: 0.5rem;
 }
 
 .time-slot {
   @apply border rounded p-2;
 }
-
-
-

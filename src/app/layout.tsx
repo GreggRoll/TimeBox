@@ -1,19 +1,20 @@
-
 import type {Metadata} from 'next';
 import {Inter} from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
-import { ThemeProvider } from 'next-themes'
 
 const inter = Inter({
   variable: '--font-inter',
   subsets: ['latin'],
 });
 
-export const metadata: Metadata = {
+export const metadata = {
   title: 'TimeWise',
   description: 'A web based app for time boxing',
 };
+
+import { ThemeProvider } from 'next-themes';
+import React from 'react';
 
 export default function RootLayout({
   children,
@@ -31,4 +32,3 @@ export default function RootLayout({
     </html>
   );
 }
-

@@ -3,7 +3,7 @@
 import React, {useState, useEffect} from 'react';
 import {Input} from '@/components/ui/input';
 import {Textarea} from '@/components/ui/textarea';
-import {Settings} from 'lucide-react';
+import {Settings as SettingsIcon} from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -15,6 +15,7 @@ import {Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, Di
 import {Label} from "@/components/ui/label"
 import {Button} from "@/components/ui/button"
 import { useTheme } from 'next-themes'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const Home = () => {
   const [date, setDate] = useState('');
@@ -40,7 +41,7 @@ const Home = () => {
             <svg
               width="40"
               height="40"
-              viewBox="0 0 24 24"
+              viewBox="0 0 24 0 24"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -59,7 +60,7 @@ const Home = () => {
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button variant="ghost" className="rounded-full p-2 hover:bg-accent">
-                      <Settings size={20} />
+                      <SettingsIcon size={20} />
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
@@ -85,11 +86,19 @@ const Home = () => {
                         <Label htmlFor="theme" className="text-right">
                           Theme
                         </Label>
-                        <select className="col-span-3" value={theme} onChange={(e) => setTheme(e.target.value)}>
-                            <option value="light">Light</option>
-                            <option value="dark">Dark</option>
-                            <option value="system">System</option>
-                        </select>
+                           <Select onValueChange={setTheme} defaultValue={theme}>
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Theme" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Theme</SelectLabel>
+                                    <SelectItem value="light">Light</SelectItem>
+                                    <SelectItem value="dark">Dark</SelectItem>
+                                    <SelectItem value="system">System</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
                       </div>
                       <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="start-time" className="text-right">
@@ -173,16 +182,18 @@ const Home = () => {
             />
           </div>
           <div className="time-slots">
-            <div className="font-semibold"></div>
-            <div className="font-semibold">:00</div>
-            <div className="font-semibold">:30</div>
-            {timeSlots.map(time => (
-              <React.Fragment key={time}>
-                <div>{time}</div>
-                <Input type="text" placeholder="Task" className="time-slot" />
-                <Input type="text" placeholder="Task" className="time-slot" />
-              </React.Fragment>
-            ))}
+             <div className="grid grid-cols-3">
+                <div className="font-semibold"></div>
+                <div className="font-semibold">:00</div>
+                <div className="font-semibold">:30</div>
+                 {timeSlots.map(time => (
+                  <React.Fragment key={time}>
+                    <div>{time}</div>
+                    <Input type="text" placeholder="Task" className="time-slot" />
+                    <Input type="text" placeholder="Task" className="time-slot" />
+                  </React.Fragment>
+                ))}
+            </div>
           </div>
         </div>
       </div>
