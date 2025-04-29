@@ -8,12 +8,12 @@ const inter = Inter({
   subsets: ['latin'],
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'TimeWise',
   description: 'A web based app for time boxing',
 };
 
-import { ThemeProvider } from 'next-themes';
+import { ThemeProvider } from '@/components/theme-provider';
 import React from 'react';
 
 export default function RootLayout({
@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} antialiased`}>
-         <ThemeProvider attribute="class">
+         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         {children}
          <Toaster />
          </ThemeProvider>
