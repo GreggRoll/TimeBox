@@ -22,10 +22,10 @@ const Home = () => {
   const [topPriorities, setTopPriorities] = useState(['', '', '']);
   const [brainDump, setBrainDump] = useState('');
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(true);
   const [startTime, setStartTime] = useState(5);
   const [endTime, setEndTime] = useState(23);
   const { theme, setTheme } = useTheme();
+   const [open, setOpen] = React.useState(false)
 
 
   const timeSlots = Array.from(
@@ -57,7 +57,7 @@ const Home = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Dialog>
+                <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild>
                     <Button variant="ghost" className="rounded-full p-2 hover:bg-accent">
                       <SettingsIcon size={20} />
@@ -72,17 +72,6 @@ const Home = () => {
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                       <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="sound" className="text-right">
-                          Sound
-                        </Label>
-                        <Switch
-                          id="sound"
-                          checked={soundEnabled}
-                          onCheckedChange={setSoundEnabled}
-                          className="col-span-3"
-                        />
-                      </div>
-                       <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="theme" className="text-right">
                           Theme
                         </Label>
@@ -126,7 +115,7 @@ const Home = () => {
                       </div>
                     </div>
                     <DialogFooter>
-                      <Button type="submit">Save</Button>
+                      <Button type="submit" onClick={() => setOpen(false)}>Save</Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
@@ -184,8 +173,8 @@ const Home = () => {
           <div className="time-slots">
              <div className="grid grid-cols-3">
                 <div className="font-semibold"></div>
-                <div className="font-semibold">:00</div>
-                <div className="font-semibold">:30</div>
+                <div className="font-semibold justify-self-center">:00</div>
+                <div className="font-semibold justify-self-center">:30</div>
                  {timeSlots.map(time => (
                   <React.Fragment key={time}>
                     <div>{time}</div>
