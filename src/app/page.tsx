@@ -20,26 +20,19 @@ const SettingsModal: React.FC<{
   setSoundEnabled: (enabled: boolean) => void;
 }> = ({open, onOpenChange, soundEnabled, setSoundEnabled}) => {
   return (
-    <div className="flex items-center space-x-2">
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              className="rounded-full p-2 hover:bg-accent"
-              onClick={() => onOpenChange(true)}
-            >
-              <Settings size={20} />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>Settings</TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+    <div>
       <div className="flex items-center space-x-2">
         <Switch
           id="sound"
           checked={soundEnabled}
           onCheckedChange={setSoundEnabled}
         />
+        <label
+          htmlFor="sound"
+          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        >
+          Sound
+        </label>
       </div>
     </div>
   );
@@ -55,9 +48,9 @@ export default function Home() {
   const timeSlots = Array.from({length: 19}, (_, i) => i + 5); // Times from 5 to 23
 
   return (
-    <div className="timebox-container">
-      <div className="timebox-left">
-        <div className="flex items-center justify-between">
+    <>
+      <div className="bg-background border-b sticky top-0 z-10">
+        <div className="flex items-center justify-between p-4">
           <div className="flex items-center">
             <svg
               width="40"
@@ -75,69 +68,87 @@ export default function Home() {
             </svg>
             <h1 className="text-2xl font-bold">The Time Box.</h1>
           </div>
-          <SettingsModal
-            open={settingsOpen}
-            onOpenChange={setSettingsOpen}
-            soundEnabled={soundEnabled}
-            setSoundEnabled={setSoundEnabled}
-          />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  className="rounded-full p-2 hover:bg-accent"
+                  onClick={() => setSettingsOpen(true)}
+                >
+                  <Settings size={20} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <SettingsModal
+                  open={settingsOpen}
+                  onOpenChange={setSettingsOpen}
+                  soundEnabled={soundEnabled}
+                  setSoundEnabled={setSoundEnabled}
+                />
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
+      </div>
 
-        <div className="top-priorities">
-          <h2 className="text-lg font-semibold mb-2">Top Priorities</h2>
-          {topPriorities.map((priority, index) => (
-            <Input
-              key={index}
-              type="text"
-              placeholder={`Priority ${index + 1}`}
-              value={priority}
-              onChange={e => {
-                const newPriorities = [...topPriorities];
-                newPriorities[index] = e.target.value;
-                setTopPriorities(newPriorities);
-              }}
-              className="mb-1"
+      <div className="timebox-container">
+        <div className="timebox-left">
+          <div className="top-priorities">
+            <h2 className="text-lg font-semibold mb-2">Top Priorities</h2>
+            {topPriorities.map((priority, index) => (
+              <Input
+                key={index}
+                type="text"
+                placeholder={`Priority ${index + 1}`}
+                value={priority}
+                onChange={e => {
+                  const newPriorities = [...topPriorities];
+                  newPriorities[index] = e.target.value;
+                  setTopPriorities(newPriorities);
+                }}
+                className="mb-1"
+              />
+            ))}
+          </div>
+
+          <div className="brain-dump">
+            <h2 className="text-lg font-semibold mb-2">Brain Dump</h2>
+            <Textarea
+              placeholder="Enter your thoughts here..."
+              value={brainDump}
+              onChange={e => setBrainDump(e.target.value)}
+              className="h-40"
             />
-          ))}
+          </div>
         </div>
 
-        <div className="brain-dump">
-          <h2 className="text-lg font-semibold mb-2">Brain Dump</h2>
-          <Textarea
-            placeholder="Enter your thoughts here..."
-            value={brainDump}
-            onChange={e => setBrainDump(e.target.value)}
-            className="h-40"
-          />
+        <div className="timebox-right">
+          <div>
+            <label htmlFor="date" className="block text-sm font-medium text-gray-700">
+              Date:
+            </label>
+            <Input
+              type="date"
+              id="date"
+              value={date}
+              onChange={e => setDate(e.target.value)}
+              className="mb-4"
+            />
+          </div>
+          <div className="time-slots">
+            <div className="font-semibold"></div>
+            <div className="font-semibold">:00</div>
+            <div className="font-semibold">:30</div>
+            {timeSlots.map(time => (
+              <React.Fragment key={time}>
+                <div>{time}</div>
+                <Input type="text" placeholder="Task" className="time-slot" />
+                <Input type="text" placeholder="Task" className="time-slot" />
+              </React.Fragment>
+            ))}
+          </div>
         </div>
       </div>
-
-      <div className="timebox-right">
-        <div>
-          <label htmlFor="date" className="block text-sm font-medium text-gray-700">
-            Date:
-          </label>
-          <Input
-            type="date"
-            id="date"
-            value={date}
-            onChange={e => setDate(e.target.value)}
-            className="mb-4"
-          />
-        </div>
-        <div className="time-slots">
-          <div className="font-semibold"></div>
-          <div className="font-semibold">:00</div>
-          <div className="font-semibold">:30</div>
-          {timeSlots.map(time => (
-            <React.Fragment key={time}>
-              <div>{time}</div>
-              <Input type="text" placeholder="Task" className="time-slot" />
-              <Input type="text" placeholder="Task" className="time-slot" />
-            </React.Fragment>
-          ))}
-        </div>
-      </div>
-    </div>
+    </>
   );
 }
