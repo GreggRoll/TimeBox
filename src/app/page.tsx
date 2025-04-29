@@ -1,195 +1,89 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
-import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { cn } from '@/lib/utils';
-import { Play, Pause, RefreshCw, Settings } from 'lucide-react';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-
-const TimerDisplay: React.FC<{ duration: number; timeLeft: number }> = ({ duration, timeLeft }) => {
-  const progress = (timeLeft / duration) * 100;
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
-
-  return (
-    <div className="relative w-80 h-80 mx-auto">
-      <Progress value={100 - progress} className="absolute top-0 left-0 w-full h-full rounded-full bg-timer-background" />
-      <Progress value={progress} className="absolute top-0 left-0 w-full h-full rounded-full transform rotate-90" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl font-bold">
-        {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
-      </div>
-    </div>
-  );
-};
-
-const TimerControls: React.FC<{
-  duration: number;
-  setDuration: (duration: number) => void;
-  startTimer: () => void;
-  pauseTimer: () => void;
-  resetTimer: () => void;
-  isRunning: boolean;
-}> = ({ duration, setDuration, startTimer, pauseTimer, resetTimer, isRunning }) => {
-  return (
-    <div className="flex flex-col items-center space-y-4">
-      <div className="flex items-center space-x-2">
-        <Input
-          type="number"
-          value={duration}
-          onChange={(e) => setDuration(Number(e.target.value))}
-          className="w-24 text-center"
-        />
-        <span>minutes</span>
-      </div>
-      <div className="flex space-x-4">
-       <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="outline" onClick={startTimer} disabled={isRunning}>
-                <Play className="h-4 w-4 mr-2" />
-                Start
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              Start TimeWise
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="outline" onClick={pauseTimer} disabled={!isRunning}>
-                <Pause className="h-4 w-4 mr-2" />
-                Pause
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              Pause TimeWise
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="outline" onClick={resetTimer}>
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Reset
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              Reset TimeWise
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
-    </div>
-  );
-};
-
-const SettingsComponent: React.FC<{ soundEnabled: boolean; setSoundEnabled: (enabled: boolean) => void }> = ({
-  soundEnabled,
-  setSoundEnabled,
-}) => {
-  return (
-    <div className="flex items-center space-x-2">
-      <span>Notification Sound:</span>
-      <Switch checked={soundEnabled} onCheckedChange={setSoundEnabled} />
-    </div>
-  );
-};
+import React, {useState} from 'react';
+import {Input} from '@/components/ui/input';
+import {Textarea} from '@/components/ui/textarea';
 
 export default function Home() {
-  const [duration, setDuration] = useState(25);
-  const [timeLeft, setTimeLeft] = useState(duration * 60);
-  const [isRunning, setIsRunning] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const timerId = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    setTimeLeft(duration * 60);
-  }, [duration]);
-
-  useEffect(() => {
-    if (isRunning && timeLeft > 0) {
-      timerId.current = setInterval(() => {
-        setTimeLeft((prevTimeLeft) => prevTimeLeft - 1);
-      }, 1000);
-    } else if (timeLeft === 0) {
-      clearInterval(timerId.current as NodeJS.Timeout);
-      setIsRunning(false);
-      if (soundEnabled) {
-        new Audio('/notification.mp3').play();
-      }
-    } else {
-      clearInterval(timerId.current as NodeJS.Timeout);
-    }
-
-    return () => clearInterval(timerId.current as NodeJS.Timeout);
-  }, [isRunning, timeLeft, soundEnabled]);
-
-  const startTimer = () => {
-    setIsRunning(true);
-  };
-
-  const pauseTimer = () => {
-    setIsRunning(false);
-  };
-
-  const resetTimer = () => {
-    setIsRunning(false);
-    setTimeLeft(duration * 60);
-  };
+  const [date, setDate] = useState('');
+  const [topPriorities, setTopPriorities] = useState(['', '', '']);
+  const [brainDump, setBrainDump] = useState('');
+  const timeSlots = Array.from({length: 19}, (_, i) => i + 5); // Times from 5 to 23
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardContent className="flex flex-col space-y-6">
-          <h1 className="text-2xl font-bold text-center">TimeWise</h1>
-          <TimerDisplay duration={duration * 60} timeLeft={timeLeft} />
-          <TimerControls
-            duration={duration}
-            setDuration={setDuration}
-            startTimer={startTimer}
-            pauseTimer={pauseTimer}
-            resetTimer={resetTimer}
-            isRunning={isRunning}
+    <div className="timebox-container">
+      <div className="timebox-left">
+        <div className="flex items-center">
+          <svg
+            width="40"
+            height="40"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-10 w-10 mr-2">
+            <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+            <line x1="9" x2="15" y1="3" y2="21" />
+          </svg>
+          <h1 className="text-2xl font-bold">The Time Box.</h1>
+        </div>
+
+        <div className="top-priorities">
+          <h2 className="text-lg font-semibold mb-2">Top Priorities</h2>
+          {topPriorities.map((priority, index) => (
+            <Input
+              key={index}
+              type="text"
+              placeholder={`Priority ${index + 1}`}
+              value={priority}
+              onChange={e => {
+                const newPriorities = [...topPriorities];
+                newPriorities[index] = e.target.value;
+                setTopPriorities(newPriorities);
+              }}
+              className="mb-1"
+            />
+          ))}
+        </div>
+
+        <div className="brain-dump">
+          <h2 className="text-lg font-semibold mb-2">Brain Dump</h2>
+          <Textarea
+            placeholder="Enter your thoughts here..."
+            value={brainDump}
+            onChange={e => setBrainDump(e.target.value)}
+            className="h-40"
           />
-          <div className="flex justify-between items-center">
-            <SettingsComponent soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled} />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <Settings className="h-4 w-4 mr-2" />
-                    Settings
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[200px]">
-                <DropdownMenuItem>
-                  <div className="flex items-center space-x-2">
-                    <span>Notification Sound</span>
-                    <Switch checked={soundEnabled} onCheckedChange={setSoundEnabled} />
-                  </div>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+
+      <div className="timebox-right">
+        <div>
+          <label htmlFor="date" className="block text-sm font-medium text-gray-700">
+            Date:
+          </label>
+          <Input
+            type="date"
+            id="date"
+            value={date}
+            onChange={e => setDate(e.target.value)}
+            className="mb-4"
+          />
+        </div>
+        <div className="time-slots">
+          <div className="font-semibold">:00</div>
+          <div className="font-semibold">:30</div>
+          {timeSlots.map(time => (
+            <React.Fragment key={time}>
+              <div>{time}</div>
+              <Input type="text" placeholder="Task" className="time-slot" />
+              <Input type="text" placeholder="Task" className="time-slot" />
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
