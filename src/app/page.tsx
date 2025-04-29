@@ -64,9 +64,6 @@ const Home = () => {
                   <DialogContent>
                     <DialogHeader>
                       <DialogTitle>Settings</DialogTitle>
-                      <DialogDescription>
-                        Adjust settings to your preference.
-                      </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                       <div className="grid grid-cols-4 items-center gap-4">
@@ -169,13 +166,13 @@ const Home = () => {
             />
           </div>
           <div className="grid">
-             <div className="grid grid-cols-3">
-                <div className="font-semibold justify-self-center" style={{ width: '2rem' }}></div>
+             <div className="grid grid-cols-[10%_45%_45%]">
+                <div className="font-semibold justify-self-center" ></div>
                 <div className="font-semibold justify-self-center">:00</div>
                 <div className="font-semibold justify-self-center">:30</div>
                  {timeSlots.map(time => (
                   <React.Fragment key={time}>
-                    <div style={{ width: '2rem', textAlign: 'center' }}>{time}</div>
+                    <div style={{ width: '10%', textAlign: 'center' }}>{time}</div>
                     <Input type="text" placeholder="Task" className="time-slot" />
                     <Input type="text" placeholder="Task" className="time-slot" />
                   </React.Fragment>
@@ -189,3 +186,4 @@ const Home = () => {
 };
 
 export default Home;
+
