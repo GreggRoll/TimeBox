@@ -170,12 +170,12 @@ const Home = () => {
           </div>
           <div className="grid">
              <div className="grid grid-cols-3">
-                <div className="font-semibold"></div>
+                <div className="font-semibold justify-self-center" style={{ width: '2rem' }}></div>
                 <div className="font-semibold justify-self-center">:00</div>
                 <div className="font-semibold justify-self-center">:30</div>
                  {timeSlots.map(time => (
                   <React.Fragment key={time}>
-                    <div>{time}</div>
+                    <div style={{ width: '2rem', textAlign: 'center' }}>{time}</div>
                     <Input type="text" placeholder="Task" className="time-slot" />
                     <Input type="text" placeholder="Task" className="time-slot" />
                   </React.Fragment>
