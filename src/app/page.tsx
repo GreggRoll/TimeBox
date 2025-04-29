@@ -10,7 +10,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import {Switch} from '@/components/ui/switch';
 import {Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogHeader, DialogFooter} from "@/components/ui/dialog"
 import {Label} from "@/components/ui/label"
 import {Button} from "@/components/ui/button"
@@ -21,7 +20,6 @@ const Home = () => {
   const [date, setDate] = useState('');
   const [topPriorities, setTopPriorities] = useState(['', '', '']);
   const [brainDump, setBrainDump] = useState('');
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const [startTime, setStartTime] = useState(5);
   const [endTime, setEndTime] = useState(23);
   const { theme, setTheme } = useTheme();
@@ -126,9 +124,9 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="timebox-container">
-        <div className="timebox-left">
-          <div className="top-priorities">
+      <div className="flex flex-col md:flex-row h-screen">
+        <div className="flex-1 p-4">
+          <div className="mb-4">
             <h2 className="text-lg font-semibold mb-2">Top Priorities</h2>
             {topPriorities.map((priority, index) => (
               <Input
@@ -146,7 +144,7 @@ const Home = () => {
             ))}
           </div>
 
-          <div className="brain-dump">
+          <div className="mb-4">
             <h2 className="text-lg font-semibold mb-2">Brain Dump</h2>
             <Textarea
               placeholder="Enter your thoughts here..."
@@ -157,8 +155,8 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="timebox-right">
-          <div>
+        <div className="flex-1 p-4">
+          <div className="mb-4">
             <label htmlFor="date" className="block text-sm font-medium text-gray-700">
               Date:
             </label>
@@ -170,7 +168,7 @@ const Home = () => {
               className="mb-4"
             />
           </div>
-          <div className="time-slots">
+          <div className="grid">
              <div className="grid grid-cols-3">
                 <div className="font-semibold"></div>
                 <div className="font-semibold justify-self-center">:00</div>
