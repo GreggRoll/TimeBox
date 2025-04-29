@@ -1,9 +1,8 @@
 'use client';
 
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Input} from '@/components/ui/input';
 import {Textarea} from '@/components/ui/textarea';
-import {cn} from '@/lib/utils';
 import {Settings} from 'lucide-react';
 import {
   Tooltip,
@@ -12,40 +11,26 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import {Switch} from '@/components/ui/switch';
+import {Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogHeader, DialogFooter} from "@/components/ui/dialog"
+import {Label} from "@/components/ui/label"
+import {Button} from "@/components/ui/button"
+import { useTheme } from 'next-themes'
 
-const SettingsModal: React.FC<{
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  soundEnabled: boolean;
-  setSoundEnabled: (enabled: boolean) => void;
-}> = ({open, onOpenChange, soundEnabled, setSoundEnabled}) => {
-  return (
-    <div>
-      <div className="flex items-center space-x-2">
-        <Switch
-          id="sound"
-          checked={soundEnabled}
-          onCheckedChange={setSoundEnabled}
-        />
-        <label
-          htmlFor="sound"
-          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-        >
-          Sound
-        </label>
-      </div>
-    </div>
-  );
-};
-
-export default function Home() {
+const Home = () => {
   const [date, setDate] = useState('');
   const [topPriorities, setTopPriorities] = useState(['', '', '']);
   const [brainDump, setBrainDump] = useState('');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [startTime, setStartTime] = useState(5);
+  const [endTime, setEndTime] = useState(23);
+  const { theme, setTheme } = useTheme();
 
-  const timeSlots = Array.from({length: 19}, (_, i) => i + 5); // Times from 5 to 23
+
+  const timeSlots = Array.from(
+    {length: endTime - startTime + 1},
+    (_, i) => startTime + i
+  );
 
   return (
     <>
@@ -71,21 +56,73 @@ export default function Home() {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button
-                  className="rounded-full p-2 hover:bg-accent"
-                  onClick={() => setSettingsOpen(true)}
-                >
-                  <Settings size={20} />
-                </button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost" className="rounded-full p-2 hover:bg-accent">
+                      <Settings size={20} />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Settings</DialogTitle>
+                      <DialogDescription>
+                        Adjust settings to your preference.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="sound" className="text-right">
+                          Sound
+                        </Label>
+                        <Switch
+                          id="sound"
+                          checked={soundEnabled}
+                          onCheckedChange={setSoundEnabled}
+                          className="col-span-3"
+                        />
+                      </div>
+                       <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="theme" className="text-right">
+                          Theme
+                        </Label>
+                        <select className="col-span-3" value={theme} onChange={(e) => setTheme(e.target.value)}>
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                            <option value="system">System</option>
+                        </select>
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="start-time" className="text-right">
+                          Start Time
+                        </Label>
+                        <Input
+                          type="number"
+                          id="start-time"
+                          value={startTime}
+                          onChange={(e) => setStartTime(parseInt(e.target.value))}
+                          className="col-span-3"
+                        />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="end-time" className="text-right">
+                          End Time
+                        </Label>
+                        <Input
+                          type="number"
+                          id="end-time"
+                          value={endTime}
+                          onChange={(e) => setEndTime(parseInt(e.target.value))}
+                          className="col-span-3"
+                        />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button type="submit">Save</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </TooltipTrigger>
-              <TooltipContent>
-                <SettingsModal
-                  open={settingsOpen}
-                  onOpenChange={setSettingsOpen}
-                  soundEnabled={soundEnabled}
-                  setSoundEnabled={setSoundEnabled}
-                />
-              </TooltipContent>
+              <TooltipContent>Settings</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
@@ -151,4 +188,6 @@ export default function Home() {
       </div>
     </>
   );
-}
+};
+
+export default Home;
