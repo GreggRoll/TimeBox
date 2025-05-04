@@ -3,7 +3,7 @@
 import React, {useState, useEffect} from 'react';
 import {Input} from '@/components/ui/input';
 import {Textarea} from '@/components/ui/textarea';
-import {Settings as SettingsIcon, User as UserIcon, RefreshCw as RefreshIcon, Play as PlayIcon, Pause as PauseIcon } from 'lucide-react';
+import {Settings as SettingsIcon, User as UserIcon } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -59,7 +59,7 @@ const Home = () => {
             <svg
               width="40"
               height="40"
-              viewBox="0 0 24 0 24"
+              viewBox="0 0 24 24" // Corrected viewBox
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -149,7 +149,7 @@ const Home = () => {
                 <TooltipContent>Settings</TooltipContent>
               </Tooltip>
             </TooltipProvider>
-               <TooltipProvider>
+            <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
@@ -170,6 +170,7 @@ const Home = () => {
                       {isSignedIn ? (
                         // Signed-in state: show calendar
                         <div className="grid gap-4 py-4">
+                           <Label>Select Date</Label>
                           <Popover>
                             <PopoverTrigger asChild>
                               <Button
@@ -226,13 +227,13 @@ const Home = () => {
                 </TooltipTrigger>
                 <TooltipContent>Profile</TooltipContent>
               </Tooltip>
-            </TooltipProvider>
+           </TooltipProvider>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row h-screen">
-        <div className="flex-1 p-4">
+      <div className="flex flex-col md:flex-row h-[calc(100vh-65px)]"> {/* Adjusted height */}
+        <div className="md:w-1/2 p-4 border-r"> {/* Left pane */}
           <div className="mb-4">
             <h2 className="text-lg font-semibold mb-2">Top Priorities</h2>
             {topPriorities.map((priority, index) => (
@@ -257,59 +258,36 @@ const Home = () => {
               placeholder="Enter your thoughts here..."
               value={brainDump}
               onChange={e => setBrainDump(e.target.value)}
-              className="h-40"
+              className="h-40" // Consider making this resizeable or taller
             />
           </div>
         </div>
 
-        <div className="flex-1 p-4">
+        <div className="md:w-1/2 p-4"> {/* Right pane */}
           <div className="mb-4">
-            <label htmlFor="date" className="block text-sm font-medium text-gray-700">
+             <label className="block text-sm font-medium text-gray-700 mb-1">
               Date:
             </label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={'outline'}
-                  className={cn(
-                    'w-[240px] justify-start text-left font-normal',
-                    !date && 'text-muted-foreground'
-                  )}
-                >
-                  {date ? (
-                    format(date, 'PPP')
-                  ) : (
-                    <span>Pick a date</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-auto p-0"
-                align="start"
-                side="bottom"
-              >
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  disabled={futureDate => futureDate > new Date()}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+            <span className="text-lg font-semibold">
+              {date ? format(date, 'PPP') : 'No date selected'}
+            </span>
           </div>
           <div className="grid">
-            <div className="grid grid-cols-[7%_46.5%_46.5%]">
-              <div className="font-semibold justify-self-center self-center"></div>
-              <div className="font-semibold justify-self-center">:00</div>
-              <div className="font-semibold justify-self-center">:30</div>
-              {timeSlots.map(time => (
-                <React.Fragment key={time}>
-                  <div className="text-center self-center">{time}</div>
-                  <Input type="text" placeholder="Task" className="time-slot" />
-                  <Input type="text" placeholder="Task" className="time-slot" />
-                </React.Fragment>
-              ))}
+             {/* Grid for Time Slots */}
+            <div className="grid grid-cols-[max-content_1fr_1fr] gap-x-2 gap-y-1 items-center">
+               {/* Header Row */}
+                <div className="font-semibold justify-self-center"></div>
+                <div className="font-semibold justify-self-center">:00</div>
+                <div className="font-semibold justify-self-center">:30</div>
+
+                 {/* Time Slot Rows */}
+                {timeSlots.map(time => (
+                    <React.Fragment key={time}>
+                    <div className="text-sm font-medium justify-self-center self-center pr-2">{time}</div>
+                    <Input type="text" placeholder="Task" className="time-slot mb-1" />
+                    <Input type="text" placeholder="Task" className="time-slot mb-1" />
+                    </React.Fragment>
+                ))}
             </div>
           </div>
         </div>
