@@ -59,7 +59,8 @@ function debounce<F extends (...args: any[]) => any>(func: F, waitFor: number) {
 
 
 const Home = () => {
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  // Initialize date state to undefined to prevent hydration mismatch
+  const [date, setDate] = useState<Date | undefined>(undefined);
   const [topPriorities, setTopPriorities] = useState<string[]>(['', '', '']);
   const [brainDump, setBrainDump] = useState<string>('');
   const [startTime, setStartTime] = useState<number>(5);
@@ -70,9 +71,17 @@ const Home = () => {
   const { user, loading: authLoading } = useAuthState(); // Use Firebase auth state
   const [timeSlotTasks, setTimeSlotTasks] = useState<{ [time: number]: { '00'?: string; '30'?: string } }>({});
   const [dataLoading, setDataLoading] = useState<boolean>(false);
+  const [displayDate, setDisplayDate] = useState<Date | undefined>(undefined); // Separate state for display
 
 
    const formattedDate = useMemo(() => date ? format(date, 'yyyy-MM-dd') : '', [date]);
+
+   // Set initial date on client-side after hydration
+   useEffect(() => {
+    const initialDate = new Date();
+     setDate(initialDate);
+     setDisplayDate(initialDate); // Also set initial display date
+   }, []);
 
   // Debounced save function
   const debouncedSaveData = useCallback(
@@ -84,7 +93,7 @@ const Home = () => {
     []
   );
 
-  // Load data from Firestore
+  // Load data from Firestore based on the selected date
   useEffect(() => {
     if (user && formattedDate && !authLoading) {
       setDataLoading(true);
@@ -100,22 +109,26 @@ const Home = () => {
            setTimeSlotTasks({});
         }
         setDataLoading(false);
+        if(date) setDisplayDate(date); // Update display date when data is loaded for it
       });
     } else if (!user && !authLoading) {
-        // Reset fields if user logs out
+        // Reset fields if user logs out or no date selected yet
         setTopPriorities(['', '', '']);
         setBrainDump('');
         setTimeSlotTasks({});
-         setDataLoading(false); // Ensure loading is false when logged out
+        setDataLoading(false); // Ensure loading is false
     }
-  }, [user, formattedDate, authLoading]); // Depend on user, formattedDate, and authLoading
+     // Don't reload data just because displayDate changes
+  }, [user, formattedDate, authLoading, date]); // Depend on user, formattedDate, authLoading, and the actual selected date
+
 
   // Save data to Firestore when state changes (debounced)
   useEffect(() => {
-    if (user && formattedDate && !authLoading && !dataLoading) { // Only save if user exists and data isn't currently loading
+    // Prevent saving initial empty/default state before data loading or if user logs out
+     if (user && formattedDate && !authLoading && !dataLoading && date) {
        debouncedSaveData(user.uid, formattedDate, { topPriorities, brainDump, timeSlotTasks });
     }
-  }, [topPriorities, brainDump, timeSlotTasks, user, formattedDate, authLoading, dataLoading, debouncedSaveData]); // Include debouncedSaveData
+  }, [topPriorities, brainDump, timeSlotTasks, user, formattedDate, authLoading, dataLoading, date, debouncedSaveData]); // Include date
 
 
   const timeSlots = useMemo(() => Array.from(
@@ -145,7 +158,8 @@ const Home = () => {
 
  const handleDateChange = (newDate: Date | undefined) => {
     if (newDate) {
-        setDate(newDate);
+        setDate(newDate); // Update the date used for data fetching/saving
+        // Display date will update in the useEffect for data loading
         setProfileOpen(false); // Close profile modal on date selection
     }
  };
@@ -271,7 +285,7 @@ const Home = () => {
                      <DialogContent>
                       <DialogHeader>
                         <DialogTitle>
-                          {authLoading ? 'Loading...' : user ? 'Profile' : 'Sign In'}
+                          {authLoading ? 'Loading...' : user ? 'Profile & Date Select' : 'Sign In'}
                         </DialogTitle>
                         <DialogDescription>
                            {authLoading ? '' : user ? 'Select a date to view or edit your timebox.' : 'Sign in with Google to save and access your timeboxes across devices.'}
@@ -288,8 +302,8 @@ const Home = () => {
                            <Label className="text-center mb-2">Select Date</Label>
                             <Calendar
                               mode="single"
-                              selected={date}
-                              onSelect={handleDateChange} // Use handler to close modal
+                              selected={date} // Use the actual selected date for the calendar
+                              onSelect={handleDateChange} // Use handler to update date and close modal
                               disabled={(day) => day > new Date()} // Disable future dates
                               initialFocus
                               className="mx-auto" // Center the calendar
@@ -328,7 +342,8 @@ const Home = () => {
            <div className="mb-4 flex items-center">
              <CalendarIcon className="mr-2 h-5 w-5 text-muted-foreground" />
              <span className="text-lg font-semibold">
-               {date ? format(date, 'PPP') : 'No date selected'}
+               {/* Always render the span, show placeholder if date is not set yet */}
+               {displayDate ? format(displayDate, 'PPP') : 'Loading date...'}
              </span>
            </div>
 
@@ -423,3 +438,5 @@ const Home = () => {
 };
 
 export default Home;
+
+    
