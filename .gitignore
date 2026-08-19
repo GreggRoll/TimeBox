@@ -39,3 +39,17 @@ yarn-error.log*
 next-env.d.ts
 
 .genkit/*
+
+# Xcode
+/.DerivedData/
+/.build/
+DerivedData/
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM
+*.dSYM.zip
