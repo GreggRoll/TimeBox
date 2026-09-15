@@ -162,10 +162,10 @@ final class DayStore {
         )
     }
 
-    func blockBinding(id: UUID) -> Binding<String> {
+    func blockBinding(at startMinute: Int, intervalMinutes: Int) -> Binding<String> {
         Binding(
-            get: { self.sheet.blocks.first(where: { $0.id == id })?.text ?? "" },
-            set: { self.updateBlockText(id: id, text: $0) }
+            get: { self.block(startingAt: startMinute)?.text ?? "" },
+            set: { self.updateBlockText($0, at: startMinute, intervalMinutes: intervalMinutes) }
         )
     }
 
@@ -178,17 +178,8 @@ final class DayStore {
         return true
     }
 
-    func createBlock(at startMinute: Int, intervalMinutes: Int) -> UUID {
-        if let existing = block(startingAt: startMinute) { return existing.id }
-        let newBlock = TimeBlock(startMinute: startMinute, durationMinutes: intervalMinutes)
-        sheet.blocks.append(newBlock)
-        sortBlocks()
-        scheduleAutosave()
-        return newBlock.id
-    }
-
-    func finalizeBlockEditing(id: UUID) {
-        guard let index = sheet.blocks.firstIndex(where: { $0.id == id }) else { return }
+    func finalizeBlockEditing(at startMinute: Int) {
+        guard let index = sheet.blocks.firstIndex(where: { $0.startMinute == startMinute }) else { return }
         if sheet.blocks[index].text.trimmed.isEmpty { sheet.blocks.remove(at: index) }
         scheduleAutosave()
     }
@@ -295,9 +286,20 @@ final class DayStore {
         )
     }
 
-    private func updateBlockText(id: UUID, text: String) {
-        guard let index = sheet.blocks.firstIndex(where: { $0.id == id }) else { return }
-        sheet.blocks[index].text = text
+    private func updateBlockText(_ text: String, at startMinute: Int, intervalMinutes: Int) {
+        if let index = sheet.blocks.firstIndex(where: { $0.startMinute == startMinute }) {
+            sheet.blocks[index].text = text
+        } else {
+            guard !text.isEmpty else { return }
+            sheet.blocks.append(
+                TimeBlock(
+                    startMinute: startMinute,
+                    durationMinutes: intervalMinutes,
+                    text: text
+                )
+            )
+            sortBlocks()
+        }
         scheduleAutosave()
     }
 

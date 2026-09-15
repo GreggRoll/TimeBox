@@ -2,11 +2,15 @@ import SwiftUI
 import UIKit
 
 struct ContentView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     let settings: PlannerSettings
     let store: DayStore
     let exportManager: ExportManager
+    let proStore: ProStore
+
+    @State private var isProPresented = false
 
     @State private var isSidebarPresented = false
     @State private var toastMessage: String?
@@ -22,6 +26,7 @@ struct ContentView: View {
                 PlannerBackground()
 
                 plannerContent(in: geometry)
+                    .accessibilityHidden(isSidebarPresented || isProPresented)
                     .disabled(store.isLoading)
                     .overlay {
                         if store.isLoading {
@@ -43,6 +48,8 @@ struct ContentView: View {
                     PlannerSidebarView(
                         settings: settings,
                         store: store,
+                        proStore: proStore,
+                        onShowPro: presentPro,
                         width: sidebarWidth(for: geometry.size.width),
                         availableHeight: max(
                             0,
@@ -53,12 +60,17 @@ struct ContentView: View {
                         ),
                         safeAreaTop: geometry.safeAreaInsets.top,
                         onSelectDate: { date in
+                            guard ProAccessPolicy.canView(date, hasPro: proStore.hasPro) else {
+                                presentPro()
+                                return
+                            }
                             focusedField = nil
                             store.select(date: date)
                             dismissSidebar()
                         },
                         onDismiss: dismissSidebar
                     )
+                    .accessibilityHidden(isProPresented)
                     .transition(.move(edge: .leading).combined(with: .opacity))
                     .zIndex(1)
                 }
@@ -72,24 +84,23 @@ struct ContentView: View {
                 }
             }
         }
-        .navigationBarHidden(true)
-        .toolbar {
-            ToolbarItemGroup(placement: .keyboard) {
-                Spacer()
-                Button(action: dismissKeyboard) {
-                    Label("Done", systemImage: "keyboard.chevron.compact.down")
-                        .font(.system(.body, design: .rounded, weight: .semibold))
-                }
-                    .accessibilityLabel("Dismiss keyboard")
-                    .accessibilityIdentifier("dismissKeyboardButton")
-            }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
+        .toolbar(.hidden, for: .navigationBar)
+        .sheet(isPresented: $isProPresented) { ProView(proStore: proStore) }
+        .task(id: scenePhase) {
+            guard scenePhase == .active else { return }
+            repeat {
+                await proStore.refreshEntitlements()
+                enforceHistoryAccess()
+                do { try await Task.sleep(for: .seconds(60)) }
+                catch { return }
+            } while !Task.isCancelled
+        }
+        .onChange(of: proStore.hasPro) { _, _ in enforceHistoryAccess() }
+        .onReceive(NotificationCenter.default.publisher(for: .NSCalendarDayChanged)) { _ in
+            enforceHistoryAccess()
         }
         .animation(.spring(response: 0.32, dampingFraction: 0.88), value: isSidebarPresented)
-        .onChange(of: focusedField) { oldValue, newValue in
-            if case let .block(blockID)? = oldValue, newValue != .block(blockID) {
-                store.finalizeBlockEditing(id: blockID)
-            }
-        }
         .onChange(of: settings.priorityCount) { _, newCount in
             store.ensurePriorityCapacity(newCount)
         }
@@ -123,7 +134,7 @@ struct ContentView: View {
     private func plannerContent(in geometry: GeometryProxy) -> some View {
         let splitLayout = usesSplitLayout(for: geometry.size)
         let horizontalPadding = geometry.size.width < 430 ? 16.0 : 20.0
-        let bottomPadding = focusedField == nil ? max(geometry.safeAreaInsets.bottom, 20) : 12
+        let bottomPadding = max(geometry.safeAreaInsets.bottom, 20)
 
         Group {
             if splitLayout {
@@ -137,22 +148,16 @@ struct ContentView: View {
                     plannerHeader
 
                     HStack(alignment: .top, spacing: 18) {
-                        ScrollViewReader { proxy in
-                            ScrollView(showsIndicators: false) {
-                                PlannerSupportView(
-                                    settings: settings,
-                                    store: store,
-                                    focusedField: $focusedField,
-                                    expandsBrainDump: true
-                                )
-                                .padding(.bottom, 12)
-                            }
-                            .scrollDismissesKeyboard(.interactively)
-                            .onChange(of: focusedField) { _, newValue in
-                                guard let newValue, newValue.isSupportField else { return }
-                                keepVisible(newValue, using: proxy)
-                            }
+                        ScrollView(showsIndicators: false) {
+                            PlannerSupportView(
+                                settings: settings,
+                                store: store,
+                                focusedField: $focusedField,
+                                expandsBrainDump: true
+                            )
+                            .padding(.bottom, 12)
                         }
+                        .scrollDismissesKeyboard(.interactively)
                         .frame(width: widths.left, alignment: .top)
                         .frame(maxHeight: .infinity, alignment: .top)
 
@@ -164,29 +169,23 @@ struct ContentView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             } else {
-                ScrollViewReader { proxy in
-                    ScrollView(showsIndicators: false) {
-                        VStack(alignment: .leading, spacing: 20) {
-                            plannerHeader
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 20) {
+                        plannerHeader
 
-                            VStack(alignment: .leading, spacing: 18) {
-                                PlannerSupportView(
-                                    settings: settings,
-                                    store: store,
-                                    focusedField: $focusedField,
-                                    expandsBrainDump: false
-                                )
-                                timeGrid(embeddedInPage: true)
-                            }
+                        VStack(alignment: .leading, spacing: 18) {
+                            PlannerSupportView(
+                                settings: settings,
+                                store: store,
+                                focusedField: $focusedField,
+                                expandsBrainDump: false
+                            )
+                            timeGrid(embeddedInPage: true)
                         }
-                        .padding(.bottom, 12)
                     }
-                    .scrollDismissesKeyboard(.interactively)
-                    .onChange(of: focusedField) { _, newValue in
-                        guard let newValue else { return }
-                        keepVisible(newValue, using: proxy)
-                    }
+                    .padding(.bottom, 12)
                 }
+                .scrollDismissesKeyboard(.interactively)
             }
         }
         .padding(.horizontal, horizontalPadding)
@@ -214,7 +213,7 @@ struct ContentView: View {
             store: store,
             embeddedInPage: embeddedInPage,
             exportingBlockIDs: exportingBlockIDs,
-            focusedField: $focusedField,
+            hasPro: proStore.hasPro,
             onExport: export
         )
     }
@@ -231,6 +230,10 @@ struct ContentView: View {
 
     private func export(_ block: TimeBlock) {
         guard block.isMeaningful, !exportingBlockIDs.contains(block.id) else { return }
+        guard proStore.hasPro else {
+            presentPro()
+            return
+        }
         exportingBlockIDs.insert(block.id)
         let selectedDate = store.selectedDate
         let destination = settings.exportDefault
@@ -241,7 +244,8 @@ struct ContentView: View {
                 let message = try await exportManager.export(
                     block: block,
                     on: selectedDate,
-                    destination: destination
+                    destination: destination,
+                    proStore: proStore
                 )
                 UINotificationFeedbackGenerator().notificationOccurred(.success)
                 showToast(message)
@@ -249,6 +253,18 @@ struct ContentView: View {
                 UINotificationFeedbackGenerator().notificationOccurred(.error)
                 showToast(error.localizedDescription)
             }
+        }
+    }
+
+    private func presentPro() {
+        dismissKeyboard()
+        isProPresented = true
+    }
+
+    private func enforceHistoryAccess() {
+        if !ProAccessPolicy.canView(store.selectedDate, hasPro: proStore.hasPro) {
+            dismissKeyboard()
+            store.select(date: Date())
         }
     }
 
@@ -277,21 +293,6 @@ struct ContentView: View {
             && (size.width >= 820 || (horizontalSizeClass == .regular && size.width >= 700))
     }
 
-    private func keepVisible(_ field: PlannerField, using proxy: ScrollViewProxy) {
-        let delay = field.isSupportField ? 0.25 : 0.35
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-            guard focusedField == field else { return }
-            withAnimation(.easeOut(duration: 0.25)) {
-                if case let .block(blockID) = field,
-                   let block = store.sheet.blocks.first(where: { $0.id == blockID }) {
-                    proxy.scrollTo(block.startMinute, anchor: .center)
-                } else {
-                    proxy.scrollTo(field, anchor: .center)
-                }
-            }
-        }
-    }
-
     private func columnWidths(
         for totalWidth: CGFloat,
         horizontalPadding: CGFloat,
@@ -318,16 +319,11 @@ struct ContentView: View {
 
     private func dismissKeyboard() {
         focusedField = nil
-    }
-}
-
-private extension PlannerField {
-    var isSupportField: Bool {
-        switch self {
-        case .priority, .brainDump:
-            return true
-        case .block:
-            return false
-        }
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+        )
     }
 }

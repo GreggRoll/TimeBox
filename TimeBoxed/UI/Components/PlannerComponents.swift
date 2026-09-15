@@ -3,7 +3,6 @@ import SwiftUI
 enum PlannerField: Hashable {
     case priority(Int)
     case brainDump
-    case block(UUID)
 }
 
 enum PlannerTimeFormatter {

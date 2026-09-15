@@ -12,7 +12,7 @@ struct TimeGridSection: View {
     let store: DayStore
     let embeddedInPage: Bool
     let exportingBlockIDs: Set<UUID>
-    @FocusState.Binding var focusedField: PlannerField?
+    let hasPro: Bool
     let onExport: (TimeBlock) -> Void
 
     @ScaledMetric(relativeTo: .caption) private var timeLabelWidth: CGFloat = 72
@@ -71,10 +71,6 @@ struct TimeGridSection: View {
                         .onChange(of: store.selectedDate) { _, _ in syncScroll(using: proxy) }
                         .onChange(of: settings.startMinute) { _, _ in syncScroll(using: proxy) }
                         .onChange(of: intervalMinutes) { _, _ in syncScroll(using: proxy) }
-                        .onChange(of: focusedField) { _, newValue in
-                            guard case let .block(blockID)? = newValue else { return }
-                            keepFocusedBlockVisible(blockID: blockID, using: proxy)
-                        }
                     }
                 }
             }
@@ -118,7 +114,7 @@ struct TimeGridSection: View {
         return VStack(spacing: 0) {
             Color.clear.frame(height: 0).id(timeGridTopID)
 
-            LazyVStack(spacing: 0) {
+            VStack(spacing: 0) {
                 ForEach(gridEntries) { entry in
                     TimeGridRow(
                         minute: entry.minute,
@@ -130,8 +126,8 @@ struct TimeGridSection: View {
                                 && $0 < entry.minute + (entry.span * intervalMinutes)
                         } ?? false,
                         isExporting: entry.block.map { exportingBlockIDs.contains($0.id) } ?? false,
-                        focusedField: $focusedField,
                         store: store,
+                        hasPro: hasPro,
                         onExport: onExport
                     )
                     .id(entry.minute)
@@ -181,20 +177,10 @@ struct TimeGridSection: View {
         }
     }
 
-    private func keepFocusedBlockVisible(blockID: UUID, using proxy: ScrollViewProxy) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-            guard focusedField == .block(blockID),
-                  let block = store.sheet.blocks.first(where: { $0.id == blockID }) else { return }
-            withAnimation(.easeOut(duration: 0.25)) {
-                proxy.scrollTo(block.startMinute, anchor: .center)
-            }
-        }
-    }
-
 }
 
 private struct TimeGridRow: View {
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @FocusState private var isEditing: Bool
 
     @ScaledMetric(relativeTo: .body) private var minimumBlockHeight: CGFloat = 44
 
@@ -204,8 +190,8 @@ private struct TimeGridRow: View {
     let timeLabelWidth: CGFloat
     let isCurrent: Bool
     let isExporting: Bool
-    @FocusState.Binding var focusedField: PlannerField?
     let store: DayStore
+    let hasPro: Bool
     let onExport: (TimeBlock) -> Void
 
     private var timeLabel: String { PlannerTimeFormatter.label(for: minute) }
@@ -223,11 +209,7 @@ private struct TimeGridRow: View {
                 .padding(.top, 12)
                 .accessibilityHidden(true)
 
-            if let block {
-                filledBlock(block)
-            } else {
-                emptyBlock
-            }
+            timeBlock
         }
         .padding(.vertical, 4)
         .overlay(alignment: .trailing) {
@@ -241,70 +223,81 @@ private struct TimeGridRow: View {
         }
     }
 
-    private func filledBlock(_ block: TimeBlock) -> some View {
-        Group {
-            if dynamicTypeSize.isAccessibilitySize {
-                VStack(alignment: .leading, spacing: 8) {
-                    blockTextField(block)
+    private var timeBlock: some View {
+        blockContainer
+            .contextMenu {
+                if let block {
                     if block.isMeaningful {
-                        exportButton(block)
-                            .frame(maxWidth: .infinity, alignment: .trailing)
+                        Button(hasPro ? "Export" : "Unlock Pro Export", systemImage: hasPro ? "square.and.arrow.up" : "lock.fill") { onExport(block) }
+                            .disabled(isExporting)
+                    }
+                    if store.canMergeWithPrevious(blockID: block.id, intervalMinutes: intervalMinutes) {
+                        Button("Merge with previous") {
+                            store.mergeWithPrevious(blockID: block.id, intervalMinutes: intervalMinutes)
+                        }
+                    }
+                    if store.canUnmerge(blockID: block.id, intervalMinutes: intervalMinutes) {
+                        Button("Unmerge") {
+                            store.unmerge(blockID: block.id, intervalMinutes: intervalMinutes)
+                        }
+                    }
+                    Button("Clear", role: .destructive) { store.clearBlock(id: block.id) }
+                }
+            }
+            .accessibilityActions {
+                if let block {
+                    if block.isMeaningful {
+                        Button(hasPro ? "Export" : "Unlock Pro Export") {
+                            if !isExporting { onExport(block) }
+                        }
+                    }
+                    Button("Clear") {
+                        store.clearBlock(id: block.id)
                     }
                 }
-            } else {
-                blockTextField(block)
-                    .padding(.trailing, block.isMeaningful ? 44 : 0)
             }
-        }
+    }
+
+    private var blockContainer: some View {
+        blockTextField
+            .padding(.trailing, 44)
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
         .frame(maxWidth: .infinity, minHeight: minimumBlockHeight, alignment: .topLeading)
         .background(
             RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .fill(AppTheme.strongSurface)
+                .fill(block?.isMeaningful == true ? AppTheme.strongSurface : AppTheme.gridSurface)
         )
         .overlay {
             RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .stroke(AppTheme.subtleStroke, lineWidth: 1)
+                .stroke(block?.isMeaningful == true ? AppTheme.subtleStroke : AppTheme.border, lineWidth: 1)
         }
         .overlay(alignment: .topTrailing) {
-            if !dynamicTypeSize.isAccessibilitySize, block.isMeaningful {
+            if block?.isMeaningful == true, let block {
                 exportButton(block)
             }
         }
         .contentShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .contextMenu {
-            if block.isMeaningful {
-                Button("Export", systemImage: "square.and.arrow.up") { onExport(block) }
-                    .disabled(isExporting)
-            }
-            if store.canMergeWithPrevious(blockID: block.id, intervalMinutes: intervalMinutes) {
-                Button("Merge with previous") {
-                    store.mergeWithPrevious(blockID: block.id, intervalMinutes: intervalMinutes)
-                }
-            }
-            if store.canUnmerge(blockID: block.id, intervalMinutes: intervalMinutes) {
-                Button("Unmerge") { store.unmerge(blockID: block.id, intervalMinutes: intervalMinutes) }
-            }
-            Button("Clear", role: .destructive) { store.clearBlock(id: block.id) }
-        }
-        .accessibilityAction(named: "Export") {
-            if block.isMeaningful, !isExporting { onExport(block) }
-        }
-        .accessibilityAction(named: "Clear") { store.clearBlock(id: block.id) }
     }
 
-    private func blockTextField(_ block: TimeBlock) -> some View {
-        TextField("Plan this block", text: store.blockBinding(id: block.id), axis: .vertical)
-            .focused($focusedField, equals: .block(block.id))
+    private var blockTextField: some View {
+        TextField(
+            "Plan this block",
+            text: store.blockBinding(at: minute, intervalMinutes: intervalMinutes)
+        )
+            .focused($isEditing)
             .textFieldStyle(.plain)
             .font(.system(.body, design: .rounded, weight: .medium))
             .foregroundStyle(AppTheme.primaryText)
-            .lineLimit(1...)
-            .fixedSize(horizontal: false, vertical: true)
+            .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .topLeading)
             .submitLabel(.done)
-            .onSubmit { focusedField = nil }
+            .onSubmit { isEditing = false }
+            .onChange(of: isEditing) { wasEditing, isEditing in
+                if wasEditing && !isEditing {
+                    store.finalizeBlockEditing(at: minute)
+                }
+            }
             .accessibilityLabel("Block at \(timeLabel)")
             .accessibilityIdentifier("timeBlockField-\(minute)")
     }
@@ -317,7 +310,7 @@ private struct TimeGridRow: View {
                 if isExporting {
                     ProgressView().controlSize(.small)
                 } else {
-                    Image(systemName: "square.and.arrow.up")
+                    Image(systemName: hasPro ? "square.and.arrow.up" : "lock.fill")
                 }
             }
             .font(.system(size: 17, weight: .semibold))
@@ -325,33 +318,10 @@ private struct TimeGridRow: View {
         }
         .buttonStyle(.plain)
         .disabled(isExporting)
-        .accessibilityLabel("Export block at \(timeLabel)")
-        .accessibilityHint("Exports to the default destination")
+        .accessibilityLabel(hasPro ? "Export block at \(timeLabel)" : "Unlock export for block at \(timeLabel)")
+        .accessibilityHint(hasPro ? "Exports to the default destination" : "Opens Time Boxed Pro purchase options")
     }
 
-    private var emptyBlock: some View {
-        Button {
-            let blockID = store.createBlock(at: minute, intervalMinutes: intervalMinutes)
-            focusedField = .block(blockID)
-        } label: {
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .fill(AppTheme.gridSurface)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 22, style: .continuous)
-                        .stroke(AppTheme.border, lineWidth: 1)
-                }
-                .overlay(alignment: .trailing) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(AppTheme.tertiaryText)
-                        .padding(.trailing, 16)
-                }
-                .frame(maxWidth: .infinity, minHeight: minimumBlockHeight)
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel("Empty block at \(timeLabel)")
-        .accessibilityHint("Double tap to add a plan")
-    }
 }
 
 private extension View {

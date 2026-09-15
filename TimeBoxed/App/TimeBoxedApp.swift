@@ -7,6 +7,7 @@ struct TimeBoxedApp: App {
 
     @State private var settings: PlannerSettings
     @State private var dayStore: DayStore
+    @State private var proStore = ProStore()
 
     private let exportManager = ExportManager()
 
@@ -20,7 +21,7 @@ struct TimeBoxedApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack {
-                ContentView(settings: settings, store: dayStore, exportManager: exportManager)
+                ContentView(settings: settings, store: dayStore, exportManager: exportManager, proStore: proStore)
             }
             .tint(AppTheme.accent)
             .preferredColorScheme(settings.appearance.preferredColorScheme)

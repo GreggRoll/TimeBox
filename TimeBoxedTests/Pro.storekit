@@ -1,0 +1,61 @@
+{
+  "identifier": "ED61C48B-C350-4FA2-A476-221BBE19A91A",
+  "nonRenewingSubscriptions": [],
+  "products": [
+    {
+      "displayPrice": "9.99",
+      "familyShareable": false,
+      "internalID": "1000001",
+      "localizations": [
+        {
+          "description": "Unlimited history and Calendar and Reminders export.",
+          "displayName": "Time Boxed Pro Lifetime",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.GregAdams.TimeBoxed.pro.lifetime",
+      "referenceName": "Pro Lifetime",
+      "type": "NonConsumable"
+    }
+  ],
+  "settings": {
+    "_failTransactionsEnabled": false,
+    "_locale": "en_US",
+    "_storefront": "USA",
+    "_timeRate": 0
+  },
+  "subscriptionGroups": [
+    {
+      "id": "1000000",
+      "localizations": [],
+      "name": "Time Boxed Pro",
+      "subscriptions": [
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "0.99",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "1000002",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "Unlimited history and Calendar and Reminders export.",
+              "displayName": "Time Boxed Pro Monthly",
+              "locale": "en_US"
+            }
+          ],
+          "productID": "com.GregAdams.TimeBoxed.pro.monthly",
+          "recurringSubscriptionPeriod": "P1M",
+          "referenceName": "Pro Monthly",
+          "subscriptionGroupID": "1000000",
+          "type": "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version": {
+    "major": 3,
+    "minor": 0
+  }
+}

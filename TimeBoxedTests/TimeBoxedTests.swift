@@ -1,4 +1,6 @@
 import XCTest
+import StoreKit
+import StoreKitTest
 @testable import Time_Boxed
 
 final class TimeBoxedTests: XCTestCase {
@@ -62,6 +64,30 @@ final class TimeBoxedTests: XCTestCase {
         XCTAssertEqual(fixture.store.sheet.blocks.map(\.durationMinutes), [30, 30])
     }
 
+    @MainActor
+    func testInlineBlockBindingCreatesUpdatesAndFinalizesBlock() async throws {
+        let fixture = try makeFixture(interval: 30)
+        await fixture.store.waitForPendingOperations()
+        let startMinute = 9 * 60
+        let binding = fixture.store.blockBinding(at: startMinute, intervalMinutes: 30)
+
+        XCTAssertEqual(binding.wrappedValue, "")
+        XCTAssertTrue(fixture.store.sheet.blocks.isEmpty)
+
+        binding.wrappedValue = "Deep work"
+
+        XCTAssertEqual(fixture.store.sheet.blocks.count, 1)
+        XCTAssertEqual(fixture.store.sheet.blocks.first?.startMinute, startMinute)
+        XCTAssertEqual(fixture.store.sheet.blocks.first?.durationMinutes, 30)
+        XCTAssertEqual(fixture.store.sheet.blocks.first?.text, "Deep work")
+
+        binding.wrappedValue = ""
+        XCTAssertEqual(fixture.store.sheet.blocks.count, 1)
+
+        fixture.store.finalizeBlockEditing(at: startMinute)
+        XCTAssertTrue(fixture.store.sheet.blocks.isEmpty)
+    }
+
     func testPersistenceSavesLoadsAndRemovesDay() async throws {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("TimeBoxedPersistenceTests-\(UUID().uuidString)", isDirectory: true)
@@ -113,5 +139,79 @@ final class TimeBoxedTests: XCTestCase {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("TimeBoxedStoreTests-\(UUID().uuidString)", isDirectory: true)
         return (settings, DayStore(settings: settings, storageDirectory: directory))
+    }
+}
+
+
+final class ProPurchaseTests: XCTestCase {
+    @MainActor
+    func testProPurchasesExpirationRefundAndRestore() async throws {
+        let url = try XCTUnwrap(Bundle(for: Self.self).url(forResource: "Pro", withExtension: "storekit"))
+        let session = try SKTestSession(contentsOf: url)
+        session.resetToDefaultState()
+        session.disableDialogs = true
+        session.clearTransactions()
+        defer { session.clearTransactions() }
+
+        let pro = ProStore()
+        await pro.refreshEntitlements()
+        XCTAssertFalse(pro.hasPro)
+        await pro.loadProducts()
+        XCTAssertEqual(pro.products.count, 2)
+        let monthly = try XCTUnwrap(pro.products.first { $0.id == ProStore.monthlyID })
+        let lifetime = try XCTUnwrap(pro.products.first { $0.id == ProStore.lifetimeID })
+        XCTAssertEqual(monthly.price, Decimal(string: "0.99"))
+        XCTAssertEqual(lifetime.price, Decimal(string: "9.99"))
+
+        // Free exports fail before EventKit requests access or writes anything.
+        for destination in [ExportDestination.calendar, .reminders] {
+            do {
+                _ = try await ExportManager().export(
+                    block: TimeBlock(startMinute: 540, durationMinutes: 30, text: "Focus"),
+                    on: Date(), destination: destination, proStore: pro
+                )
+                XCTFail("Free export should be denied")
+            } catch ExportManagerError.proRequired { } catch { XCTFail("Unexpected error: \(error)") }
+        }
+
+        await pro.purchase(monthly)
+        XCTAssertTrue(pro.hasPro)
+        XCTAssertFalse(pro.hasLifetime)
+        try session.expireSubscription(productIdentifier: ProStore.monthlyID)
+        await waitForAccess(pro, expected: false)
+        XCTAssertFalse(pro.hasPro)
+
+        await pro.purchase(lifetime)
+        XCTAssertTrue(pro.hasPro)
+        XCTAssertTrue(pro.hasLifetime)
+        let restored = ProStore()
+        await restored.restore()
+        XCTAssertTrue(restored.hasLifetime)
+        let transaction = try XCTUnwrap(session.allTransactions().first { $0.productIdentifier == ProStore.lifetimeID })
+        try session.refundTransaction(identifier: transaction.identifier)
+        await waitForAccess(restored, expected: false)
+        XCTAssertFalse(restored.hasPro)
+    }
+
+    @MainActor
+    private func waitForAccess(_ pro: ProStore, expected: Bool) async {
+        // StoreKit publishes test-session expiration/refund changes asynchronously.
+        for _ in 0..<50 {
+            await pro.refreshEntitlements()
+            if pro.hasPro == expected { return }
+            try? await Task.sleep(for: .milliseconds(100))
+        }
+    }
+
+    func testHistoryAccessAcrossDaysAndTimeZones() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: -4 * 3600)!
+        let today = Date(timeIntervalSince1970: 1_789_488_000)
+        let yesterday = calendar.date(byAdding: .day, value: -1, to: today)!
+        XCTAssertTrue(ProAccessPolicy.canView(today, hasPro: false, now: today, calendar: calendar))
+        XCTAssertFalse(ProAccessPolicy.canView(yesterday, hasPro: false, now: today, calendar: calendar))
+        XCTAssertTrue(ProAccessPolicy.canView(yesterday, hasPro: true, now: today, calendar: calendar))
+        let midnight = calendar.startOfDay(for: today)
+        XCTAssertFalse(ProAccessPolicy.canView(midnight.addingTimeInterval(-1), hasPro: false, now: midnight, calendar: calendar))
     }
 }

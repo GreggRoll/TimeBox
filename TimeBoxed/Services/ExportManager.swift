@@ -6,7 +6,9 @@ final class ExportManager {
     private let eventStore = EKEventStore()
     private let calendar = Calendar.autoupdatingCurrent
 
-    func export(block: TimeBlock, on selectedDay: Date, destination: ExportDestination) async throws -> String {
+    func export(block: TimeBlock, on selectedDay: Date, destination: ExportDestination, proStore: ProStore) async throws -> String {
+        await proStore.refreshEntitlements()
+        guard proStore.hasPro else { throw ExportManagerError.proRequired }
         let title = block.text.trimmed
         guard !title.isEmpty else {
             throw ExportManagerError.emptyBlock
@@ -15,9 +17,11 @@ final class ExportManager {
         switch destination {
         case .calendar:
             try await requestCalendarPermission()
+            guard proStore.hasPro else { throw ExportManagerError.proRequired }
             try exportToCalendar(title: title, block: block, on: selectedDay)
         case .reminders:
             try await requestReminderPermission()
+            guard proStore.hasPro else { throw ExportManagerError.proRequired }
             try exportToReminders(title: title, block: block, on: selectedDay)
         }
 
@@ -95,12 +99,15 @@ final class ExportManager {
 }
 
 enum ExportManagerError: LocalizedError {
+    case proRequired
     case emptyBlock
     case permissionDenied(name: String)
     case destinationUnavailable(name: String)
 
     var errorDescription: String? {
         switch self {
+        case .proRequired:
+            return "Unlock Pro to export to Calendar and Reminders."
         case .emptyBlock:
             return "Only filled blocks can be exported."
         case let .permissionDenied(name):

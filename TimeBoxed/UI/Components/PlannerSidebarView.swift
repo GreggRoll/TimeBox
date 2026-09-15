@@ -5,6 +5,8 @@ struct PlannerSidebarView: View {
 
     let settings: PlannerSettings
     let store: DayStore
+    let proStore: ProStore
+    let onShowPro: () -> Void
     let width: CGFloat
     let availableHeight: CGFloat
     let safeAreaTop: CGFloat
@@ -30,7 +32,36 @@ struct PlannerSidebarView: View {
                     )
                     .frame(maxWidth: .infinity)
                     .accessibilityLabel("Saved days calendar")
+                    .blur(radius: proStore.hasPro ? 0 : 7)
+                    .disabled(!proStore.hasPro)
+                    .accessibilityHidden(!proStore.hasPro)
+                    .overlay {
+                        if !proStore.hasPro {
+                            VStack(spacing: 10) {
+                                Image(systemName: "lock.fill").font(.title2)
+                                    .accessibilityHidden(true)
+                                Button("Unlock History", action: onShowPro)
+                                    .buttonStyle(.borderedProminent)
+                                    .accessibilityIdentifier("unlockHistoryButton")
+                                Text("Revisit every saved day with Pro")
+                                    .font(.caption)
+                                    .multilineTextAlignment(.center)
+                            }
+                            .padding(20)
+                            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20))
+                        }
+                    }
                 }
+
+                Button(action: onShowPro) {
+                    Label(proStore.hasPro ? "Time Boxed Pro · Unlocked" : "Explore Time Boxed Pro", systemImage: "sparkles")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .buttonStyle(.bordered)
+
+                Button("Go to Today") { onSelectDate(Date()) }
+                    .buttonStyle(.bordered)
 
                 settingsCard
             }
@@ -88,7 +119,16 @@ struct PlannerSidebarView: View {
                 timeControl(title: "Start Time", minute: settings.startMinute, binding: startTimeBinding)
                 timeControl(title: "End Time", minute: settings.endMinute, binding: endTimeBinding)
                 intervalControl
-                exportControl
+                if proStore.hasPro {
+                    exportControl
+                } else {
+                    Button(action: onShowPro) {
+                        Label("Unlock Calendar & Reminders Export", systemImage: "lock.fill")
+                            .font(.subheadline.weight(.semibold))
+                            .multilineTextAlignment(.leading)
+                    }
+                    .buttonStyle(.bordered)
+                }
             }
         }
     }
