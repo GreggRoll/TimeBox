@@ -1,0 +1,542 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A00000000000000000000030 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000018 /* Assets.xcassets */; };
+		A00000000000000000000031 /* TimeBoxedApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000011 /* TimeBoxedApp.swift */; };
+		A00000000000000000000032 /* PlannerModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000012 /* PlannerModels.swift */; };
+		A00000000000000000000033 /* PlannerSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000013 /* PlannerSettings.swift */; };
+		A00000000000000000000034 /* DayStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000014 /* DayStore.swift */; };
+		A00000000000000000000035 /* ExportManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000015 /* ExportManager.swift */; };
+		A00000000000000000000036 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000016 /* ContentView.swift */; };
+		A00000000000000000000037 /* SavedDaysCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000017 /* SavedDaysCalendarView.swift */; };
+		A00000000000000000000038 /* PlannerComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001A /* PlannerComponents.swift */; };
+		A00000000000000000000039 /* TimeGridSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001B /* TimeGridSection.swift */; };
+		A0000000000000000000003A /* PlannerSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000001C /* PlannerSidebarView.swift */; };
+		B00000000000000000000031 /* TimeBoxedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000011 /* TimeBoxedTests.swift */; };
+		C000000000000000000000D12 /* ProStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000000000000000000D11 /* ProStore.swift */; };
+		C000000000000000000000D22 /* ProView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000000000000000000D21 /* ProView.swift */; };
+		C000000000000000000000E2 /* Pro.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C000000000000000000000E1 /* Pro.storekit */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B00000000000000000000048 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A00000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A00000000000000000000040;
+			remoteInfo = TimeBoxed;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		A00000000000000000000011 /* TimeBoxedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeBoxedApp.swift; sourceTree = "<group>"; };
+		A00000000000000000000012 /* PlannerModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannerModels.swift; sourceTree = "<group>"; };
+		A00000000000000000000013 /* PlannerSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannerSettings.swift; sourceTree = "<group>"; };
+		A00000000000000000000014 /* DayStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayStore.swift; sourceTree = "<group>"; };
+		A00000000000000000000015 /* ExportManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportManager.swift; sourceTree = "<group>"; };
+		A00000000000000000000016 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A00000000000000000000017 /* SavedDaysCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedDaysCalendarView.swift; sourceTree = "<group>"; };
+		A00000000000000000000018 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A00000000000000000000019 /* Time Boxed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Time Boxed.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0000000000000000000001A /* PlannerComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannerComponents.swift; sourceTree = "<group>"; };
+		A0000000000000000000001B /* TimeGridSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeGridSection.swift; sourceTree = "<group>"; };
+		A0000000000000000000001C /* PlannerSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannerSidebarView.swift; sourceTree = "<group>"; };
+		B00000000000000000000011 /* TimeBoxedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeBoxedTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000019 /* TimeBoxedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TimeBoxedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C000000000000000000000D11 /* ProStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProStore.swift; sourceTree = "<group>"; };
+		C000000000000000000000D21 /* ProView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProView.swift; sourceTree = "<group>"; };
+		C000000000000000000000E1 /* Pro.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Pro.storekit; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A00000000000000000000050 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B00000000000000000000050 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A00000000000000000000020 = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000021 /* TimeBoxed */,
+				B00000000000000000000021 /* TimeBoxedTests */,
+				A00000000000000000000027 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A00000000000000000000021 /* TimeBoxed */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000022 /* App */,
+				A00000000000000000000023 /* Models */,
+				A00000000000000000000024 /* Persistence */,
+				A00000000000000000000025 /* Services */,
+				A00000000000000000000026 /* UI */,
+				A00000000000000000000018 /* Assets.xcassets */,
+			);
+			path = TimeBoxed;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000022 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000011 /* TimeBoxedApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000023 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000012 /* PlannerModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000024 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000013 /* PlannerSettings.swift */,
+				A00000000000000000000014 /* DayStore.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000025 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				C000000000000000000000D11 /* ProStore.swift */,
+				A00000000000000000000015 /* ExportManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000026 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				C000000000000000000000D21 /* ProView.swift */,
+				A00000000000000000000016 /* ContentView.swift */,
+				A00000000000000000000028 /* Components */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000027 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000019 /* Time Boxed.app */,
+				B00000000000000000000019 /* TimeBoxedTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000028 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000017 /* SavedDaysCalendarView.swift */,
+				A0000000000000000000001A /* PlannerComponents.swift */,
+				A0000000000000000000001B /* TimeGridSection.swift */,
+				A0000000000000000000001C /* PlannerSidebarView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		B00000000000000000000021 /* TimeBoxedTests */ = {
+			isa = PBXGroup;
+			children = (
+				B00000000000000000000011 /* TimeBoxedTests.swift */,
+				C000000000000000000000E1 /* Pro.storekit */,
+			);
+			path = TimeBoxedTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A00000000000000000000040 /* TimeBoxed */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A00000000000000000000061 /* Build configuration list for PBXNativeTarget "TimeBoxed" */;
+			buildPhases = (
+				A00000000000000000000051 /* Sources */,
+				A00000000000000000000050 /* Frameworks */,
+				A00000000000000000000052 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TimeBoxed;
+			productName = "Time Boxed";
+			productReference = A00000000000000000000019 /* Time Boxed.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B00000000000000000000040 /* TimeBoxedTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B00000000000000000000061 /* Build configuration list for PBXNativeTarget "TimeBoxedTests" */;
+			buildPhases = (
+				B00000000000000000000051 /* Sources */,
+				B00000000000000000000050 /* Frameworks */,
+				B00000000000000000000052 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B00000000000000000000049 /* PBXTargetDependency */,
+			);
+			name = TimeBoxedTests;
+			productName = TimeBoxedTests;
+			productReference = B00000000000000000000019 /* TimeBoxedTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A00000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2630;
+				TargetAttributes = {
+					A00000000000000000000040 = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					B00000000000000000000040 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = A00000000000000000000040;
+					};
+				};
+			};
+			buildConfigurationList = A00000000000000000000060 /* Build configuration list for PBXProject "TimeBoxed" */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A00000000000000000000020;
+			productRefGroup = A00000000000000000000027 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A00000000000000000000040 /* TimeBoxed */,
+				B00000000000000000000040 /* TimeBoxedTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A00000000000000000000052 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A00000000000000000000030 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B00000000000000000000052 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C000000000000000000000E2 /* Pro.storekit in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A00000000000000000000051 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C000000000000000000000D12 /* ProStore.swift in Sources */,
+				C000000000000000000000D22 /* ProView.swift in Sources */,
+				A00000000000000000000031 /* TimeBoxedApp.swift in Sources */,
+				A00000000000000000000032 /* PlannerModels.swift in Sources */,
+				A00000000000000000000033 /* PlannerSettings.swift in Sources */,
+				A00000000000000000000034 /* DayStore.swift in Sources */,
+				A00000000000000000000035 /* ExportManager.swift in Sources */,
+				A00000000000000000000036 /* ContentView.swift in Sources */,
+				A00000000000000000000037 /* SavedDaysCalendarView.swift in Sources */,
+				A00000000000000000000038 /* PlannerComponents.swift in Sources */,
+				A00000000000000000000039 /* TimeGridSection.swift in Sources */,
+				A0000000000000000000003A /* PlannerSidebarView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B00000000000000000000051 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B00000000000000000000031 /* TimeBoxedTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B00000000000000000000049 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A00000000000000000000040 /* TimeBoxed */;
+			targetProxy = B00000000000000000000048 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		A00000000000000000000070 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = J3YZVWSX7K;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A00000000000000000000071 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = J3YZVWSX7K;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		A00000000000000000000072 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 11;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Time Boxed";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "Time Boxed exports selected blocks to your calendars.";
+				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "Time Boxed exports selected blocks to your calendars.";
+				INFOPLIST_KEY_NSRemindersFullAccessUsageDescription = "Time Boxed exports selected blocks to your reminders.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.11;
+				PRODUCT_BUNDLE_IDENTIFIER = com.GregAdams.TimeBoxed;
+				PRODUCT_NAME = "Time Boxed";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A00000000000000000000073 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 11;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Time Boxed";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "Time Boxed exports selected blocks to your calendars.";
+				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "Time Boxed exports selected blocks to your calendars.";
+				INFOPLIST_KEY_NSRemindersFullAccessUsageDescription = "Time Boxed exports selected blocks to your reminders.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.11;
+				PRODUCT_BUNDLE_IDENTIFIER = com.GregAdams.TimeBoxed;
+				PRODUCT_NAME = "Time Boxed";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B00000000000000000000072 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = J3YZVWSX7K;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.GregAdams.TimeBoxedTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Time Boxed.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Time Boxed";
+			};
+			name = Debug;
+		};
+		B00000000000000000000073 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = J3YZVWSX7K;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.GregAdams.TimeBoxedTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Time Boxed.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Time Boxed";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A00000000000000000000060 /* Build configuration list for PBXProject "TimeBoxed" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A00000000000000000000070 /* Debug */,
+				A00000000000000000000071 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A00000000000000000000061 /* Build configuration list for PBXNativeTarget "TimeBoxed" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A00000000000000000000072 /* Debug */,
+				A00000000000000000000073 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B00000000000000000000061 /* Build configuration list for PBXNativeTarget "TimeBoxedTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B00000000000000000000072 /* Debug */,
+				B00000000000000000000073 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A00000000000000000000001 /* Project object */;
+}
